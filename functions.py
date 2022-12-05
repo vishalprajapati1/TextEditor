@@ -4,24 +4,27 @@ from configuration import *
 
 dictionary_words = {}
 
-class RollingHash:
-    def __init__(self, text, sizeWord):
-        self.text = text
-        self.hash = 0
-        self.sizeWord = sizeWord
-        for i in range(0, sizeWord):
-            self.hash = self.hash + (ord(self.text[i]) - ord('a')+1)*(26**(sizeWord-i-1))
-        self.window_start = 0
-        self.window_end = sizeWord
-    def move_window(self):
-        if(self.window_end <= len(self.text) - 1):
-            self.hash = self.hash - (ord(self.text[self.window_start]) - ord("a")+1)*26**(self.sizeWord-1)
-            self.hash = self.hash * 26
-            self.hash = self.hash + ord(self.text[self.window_end])- ord("a")+1
-            self.window_start = self.window_start + 1
-            self.window_end = self.window_end + 1
-    def window_text(self):
-        return self.text[self.window_start:self.window_end]
+
+#  this implementation is not efficienty as we've to deal with very large numbers
+#  todo: update with a efficient approach
+# class RollingHash:
+#     def __init__(self, text, sizeWord):
+#         self.text = text
+#         self.hash = 0
+#         self.sizeWord = sizeWord
+#         for i in range(0, sizeWord):
+#             self.hash = self.hash + (ord(self.text[i]) - ord('a')+1)*(26**(sizeWord-i-1))
+#         self.window_start = 0
+#         self.window_end = sizeWord
+#     def move_window(self):
+#         if(self.window_end <= len(self.text) - 1):
+#             self.hash = self.hash - (ord(self.text[self.window_start]) - ord("a")+1)*26**(self.sizeWord-1)
+#             self.hash = self.hash * 26
+#             self.hash = self.hash + ord(self.text[self.window_end])- ord("a")+1
+#             self.window_start = self.window_start + 1
+#             self.window_end = self.window_end + 1
+#     def window_text(self):
+#         return self.text[self.window_start:self.window_end]
 
 # dictionary
 def load_words():
@@ -32,20 +35,14 @@ def load_words():
     dictionary_words = valid_words
 
 def search(text, word):
-    word = word[0:len(word)-1]
-    positons = []
-    if(word == "" or text == ""):
-        return positons
-    if(len(word) > len(text)):
-        return positons
-    rolling_hash = RollingHash(text, len(word))
-    word_hash = RollingHash(word, len(word))
-    for i in range(len(text) - len(word) + 1):
-        if(rolling_hash.hash == word_hash.hash):
-            if(rolling_hash.window_text() == word):
-                positons.append(i)
-        rolling_hash.move_window()
-    return tuple(positons)
+    positions = []
+    previous = 0
+    while True:
+        pos = text.find(word, previous)
+        if pos == -1: break
+        previous = pos + 1
+        position.append(pos)
+    return positions
 
 def menuConstructor(root, mainMenuList, functionList):
     menubar = tk.Menu(root)
